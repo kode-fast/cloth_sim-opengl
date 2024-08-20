@@ -1,4 +1,5 @@
 /lib
 /include
-.exe
-.dll
+
+*.exe
+*.dll
