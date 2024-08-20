@@ -7,7 +7,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include "shader.h"
+#include "shader.hpp"
 
 // func declare
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -17,25 +17,6 @@ void processInput(GLFWwindow *window);
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
-// vertex shader - TODO: store in other file?
-
-const char *vertexShaderSource = "#version 460 core\n"
-    "layout (location = 0) in vec3 aPos;\n"// the position variable has attribute position 0
-    "layout (location = 1) in vec3 aColor;\n"// the color variable has attribute position 1
-    "out vec3 ourColour;\n" // output color to frag shader
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos, 1.0);\n"
-    "   ourColor = aColor;\n"
-    "}\0";
-
-const char *fragmentShaderSource = "#version 460 core\n"
-    "out vec4 FragColor;\n"
-    "in vec3 ourColor;\n"
-    "void main()\n"
-    "{\n" 
-    "   FragColor = vec4(ourColor, 1.0);\n"
-    "}\n\0";
 
 int main(){
 
@@ -65,46 +46,10 @@ int main(){
     }    
 
     // RENDER SETUP
-
-    // vertex shader
-    unsigned int vertexShader;
-    vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-    // give shader source code as a string (could pipe from other file)
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-
-    // fragment shader
-
-    unsigned int fragmentShader;
-    fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-
-    // now check if shader compilation was succsesfull - TODO check for frag shader too
-
-    int successs;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &successs);
-
-    if(!successs){
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout <<"ERROR-SHADER-VERTEX-COMPILATION-FAILD\n" << infoLog << std::endl;
-    }
-
-    // shader program (link compiled shaders)
-
-    unsigned int shaderProgram = glCreateProgram();
-
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    //TODO check if linking was succsefull 
-
-
-    // delete shader object wich we dont need anymore
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    
+    //SHADERS 
+    // crate shader class object
+    Shader ourShader("src/shader.vs", "src/shader.fs");
 
     // start using shader program (any call after this will use it)
     // glUseProgram(shaderProgram);
@@ -123,6 +68,8 @@ int main(){
         1, 2, 3    // second triangle
     };  
 
+    // TODO make mesh class
+    
     // vertex buffer object
     // vertex array object (rendering config object)
     unsigned int VBO, VAO, EBO;
@@ -164,7 +111,7 @@ int main(){
     // wireframe 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-
+    // TODO - make animation class
     // TODO - delta time
     // RENDER LOOP
     //TODO RENDERING CLASSES
@@ -184,7 +131,9 @@ int main(){
         // rendering commands 
         // 5. draw the object using the VAO object 
         // use the shader program -- may have extra function calls 
-        glUseProgram(shaderProgram);
+        ourShader.use();
+        //ourShader.setFloat("someUniformVariable", 1.0f);
+
         // use VAO to draw
         glBindVertexArray(VAO);
         // using draw elements as were now using element buffers 
