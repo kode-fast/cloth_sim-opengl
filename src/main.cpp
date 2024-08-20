@@ -126,7 +126,6 @@ int main(){
 
         // camera 
 
-        
         // rendering commands
         // shaders 
         ourShader.use();
