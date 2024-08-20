@@ -120,7 +120,6 @@ int main(){
         // every frame process input 
         processInput(window);
 
-
         // background (render first)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -128,12 +127,26 @@ int main(){
         // camera 
 
         
-        // rendering commands 
-        // 5. draw the object using the VAO object 
-        // use the shader program -- may have extra function calls 
+        // rendering commands
+        // shaders 
         ourShader.use();
         //ourShader.setFloat("someUniformVariable", 1.0f);
 
+        // transformations 
+
+        // transform is a matrix that mat operation are made on with glm functions
+        glm::mat4 transform = glm::mat4(1.0f);
+
+        double time = glfwGetTime();
+        transform = glm::translate(transform, glm::vec3(sin(time)+0.2, cos(time)+0.5, 0.0 ));  
+        transform = glm::rotate(transform, (float)time, glm::vec3(0.0, 0.0, 1.0));
+
+        // get shaders uniform loctation and set matrix    
+        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
+        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
+        
+  
+        // 5. draw the object using the VAO object 
         // use VAO to draw
         glBindVertexArray(VAO);
         // using draw elements as were now using element buffers 
