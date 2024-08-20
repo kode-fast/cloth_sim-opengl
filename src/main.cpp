@@ -7,7 +7,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-#include <shader.h>
+#include "shader.h"
+
 // func declare
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
@@ -18,23 +19,25 @@ const unsigned int HEIGHT = 600;
 
 // vertex shader - TODO: store in other file?
 
-const char *vertexShaderSource = "#version 920 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
+const char *vertexShaderSource = "#version 460 core\n"
+    "layout (location = 0) in vec3 aPos;\n"// the position variable has attribute position 0
+    "layout (location = 1) in vec3 aColor;\n"// the color variable has attribute position 1
+    "out vec3 ourColour;\n" // output color to frag shader
     "void main()\n"
     "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+    "   gl_Position = vec4(aPos, 1.0);\n"
+    "   ourColor = aColor;\n"
     "}\0";
 
-const char *fragmentShaderSource = "#version 920 core\n"
+const char *fragmentShaderSource = "#version 460 core\n"
     "out vec4 FragColor;\n"
+    "in vec3 ourColor;\n"
     "void main()\n"
     "{\n" 
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";re
+    "   FragColor = vec4(ourColor, 1.0);\n"
+    "}\n\0";
 
 int main(){
-
-    //printf("hello julianne");
 
     // opengl window settings 
     glfwInit();
@@ -109,10 +112,11 @@ int main(){
     // element buffer object (ebo)
     // store only uniqe vertices then store what order to render them in
     float vertices[] = {
-        0.5f,  0.5f, 0.0f,  // top right
-        0.5f, -0.5f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  // bottom left
-        -0.5f,  0.5f, 0.0f   // top left 
+        // pos              // color
+        0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,// top right
+        0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,// bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,// bottom left
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 1.0f // top left 
     };
     unsigned int indices[] = {  
         0, 1, 3,   // first triangle
@@ -140,8 +144,12 @@ int main(){
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // 4. set vertex attributes pointers
-    glVertexAttribPointer(0 , 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+    // color attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // unbind the VBO and VAO so we dont accedently modify them later
     // ---------------------------------------------------------------
@@ -154,11 +162,12 @@ int main(){
 
     // set global rendering settings
     // wireframe 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 
     // TODO - delta time
     // RENDER LOOP
+    //TODO RENDERING CLASSES
     while(!glfwWindowShouldClose(window))
     {
         // every frame process input 
@@ -171,11 +180,10 @@ int main(){
 
         // camera 
 
-
-
+        
         // rendering commands 
         // 5. draw the object using the VAO object 
-        // use the shader program
+        // use the shader program -- may have extra function calls 
         glUseProgram(shaderProgram);
         // use VAO to draw
         glBindVertexArray(VAO);
