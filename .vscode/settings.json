@@ -5,6 +5,10 @@
         "iosfwd": "cpp",
         "xiosbase": "cpp",
         "cmath": "cpp",
-        "cstdlib": "cpp"
+        "cstdlib": "cpp",
+        "algorithm": "cpp",
+        "locale": "cpp",
+        "optional": "cpp",
+        "xstring": "cpp"
     }
 }

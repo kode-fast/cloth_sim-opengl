@@ -48,14 +48,14 @@ int main(){
     // RENDER SETUP
     
     //SHADERS 
-    // crate shader class object
+    // crate shader class object - compile 
     Shader ourShader("src/shader.vs", "src/shader.fs");
 
-    // start using shader program (any call after this will use it)
-    // glUseProgram(shaderProgram);
 
     // element buffer object (ebo)
     // store only uniqe vertices then store what order to render them in
+    // DONT NEED TO USE RN
+    /*
     float vertices[] = {
         // pos              // color
         0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,// top right
@@ -63,19 +63,78 @@ int main(){
         -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,// bottom left
         -0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 1.0f // top left 
     };
-    unsigned int indices[] = {  
+        unsigned int indices[] = {  
         0, 1, 3,   // first triangle
         1, 2, 3    // second triangle
     };  
+
+    */
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f
+    };
+
+    glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
+    };
 
     // TODO make mesh class
     
     // vertex buffer object
     // vertex array object (rendering config object)
-    unsigned int VBO, VAO, EBO;
+
+    unsigned int VBO, VAO; //, EBO;
     // generates buffer object for vertex buffer object
     glGenBuffers(1,&VBO);
-    glGenBuffers(1, &EBO);
+    //glGenBuffers(1, &EBO);
     glGenVertexArrays(1,&VAO);
 
     //1. binds vertex array object, any subsecent calls of relevent func will be stored inside (next non rel func brakes this?)
@@ -87,14 +146,16 @@ int main(){
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // 3. copy index array in a element buffer for opengl
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // 4. set vertex attributes pointers
     // position attribute
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    // color attribute
+    
+    // TODO, USE NORMALIZED POSITION AS COLOUR ATRABUTES
+    // color attribute 
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
 
@@ -110,6 +171,8 @@ int main(){
     // set global rendering settings
     // wireframe 
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // enable z-buffer
+    glEnable(GL_DEPTH_TEST);
 
     // TODO - make animation class
     // TODO - delta time
@@ -119,39 +182,72 @@ int main(){
     {
         // every frame process input 
         processInput(window);
-
         // background (render first)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        // clear z-buffer and colur buffer for next frame
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // camera 
 
-        // rendering commands
-        // shaders 
+        // activate shader
         ourShader.use();
         //ourShader.setFloat("someUniformVariable", 1.0f);
 
-        // transformations 
-
-        // transform is a matrix that mat operation are made on with glm functions
-        glm::mat4 transform = glm::mat4(1.0f);
+        // create transformations 
+        // TODO - use a model class to make this simpler 
+        
+        // set matrices to I matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        glm::mat4 view = glm::mat4(1.0f);
+        glm::mat4 projection = glm::mat4(1.0f);
 
         double time = glfwGetTime();
-        transform = glm::translate(transform, glm::vec3(sin(time)+0.2, cos(time)+0.5, 0.0 ));  
-        transform = glm::rotate(transform, (float)time, glm::vec3(0.0, 0.0, 1.0));
+        // model matrix - translates from object -> world (aka transforms objects around the sceane)
+        model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
+        model = glm::rotate(model, (float)time * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));  
+        model = glm::translate(model, glm::vec3(sin(time)+0.2, cos(time)+0.5, 0.0 ));  
+        model = glm::rotate(model, (float)time, glm::vec3(0.0, 0.0, 1.0));
 
-        // get shaders uniform loctation and set matrix    
-        unsigned int transformLoc = glGetUniformLocation(ourShader.ID, "transform");
-        glUniformMatrix4fv(transformLoc, 1, GL_FALSE, glm::value_ptr(transform));
-        
-  
+        // view matrix - translates from world -> view (puts camera at 0,0,0 on the z axis)
+        // in this case were moving the camera back 3 units (or the sceane forward)
+        view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+
+        // projection matrix - translates from view -> clip space / screen space
+        projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
+
+        // now send each matrix to our perspective shader uning uniform variable
+
+        int modelLoc = glGetUniformLocation(ourShader.ID, "model");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+        modelLoc = glGetUniformLocation(ourShader.ID, "view");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+        modelLoc = glGetUniformLocation(ourShader.ID, "projection");
+        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(projection));
+
+
         // 5. draw the object using the VAO object 
         // use VAO to draw
         glBindVertexArray(VAO);
+
+        // BACK TO DRAWING ARRAYS 
         // using draw elements as were now using element buffers 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        
+        // call draw arrays 10 time, but send diffrent model matrix to shader each time
+        for(unsigned int i = 0; i < 10; i++)
+        {
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i; 
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            ourShader.setMat4("model", model);
 
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+                
         // check events & swap render buffers (display new image)
         glfwSwapBuffers(window);
         glfwPollEvents();    
