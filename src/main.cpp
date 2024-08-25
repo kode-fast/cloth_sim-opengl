@@ -1,4 +1,4 @@
-// done with lean opengl tutorials 
+// done with lean opengl tutorials from learnopengl.com
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -12,11 +12,27 @@
 // func declare
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
 
 // settings
 const unsigned int WIDTH = 800;
 const unsigned int HEIGHT = 600;
 
+bool firstMouse = true;
+float yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
+float pitch =  0.0f;
+float lastX =  800.0f / 2.0;
+float lastY =  600.0 / 2.0;
+
+float deltaTime = 0.0f; 
+float lastFrame = 0.0f;
+
+// set camera positions
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 int main(){
 
@@ -35,8 +51,14 @@ int main(){
         glfwTerminate();
         return -1;
     }
+
+    // register window with varius functions
     glfwMakeContextCurrent(window);
+    glfwSetCursorPosCallback(window, mouse_callback);  
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
+    // tell window to capture mouse
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // initilize glad (load all opengl function pointers)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -173,13 +195,21 @@ int main(){
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // enable z-buffer
     glEnable(GL_DEPTH_TEST);
+    
 
+    
     // TODO - make animation class
     // TODO - delta time
     // RENDER LOOP
     //TODO RENDERING CLASSES
     while(!glfwWindowShouldClose(window))
     {
+        // CALC DELTA TIME
+        float currentFrame = glfwGetTime();
+        deltaTime = currentFrame - lastFrame;
+        lastFrame = currentFrame;
+
+
         // every frame process input 
         processInput(window);
         // background (render first)
@@ -209,7 +239,24 @@ int main(){
 
         // view matrix - translates from world -> view (puts camera at 0,0,0 on the z axis)
         // in this case were moving the camera back 3 units (or the sceane forward)
-        view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+        //view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+
+        // use glm::look at to create a camera look at matrix 
+        /* ex:
+        view = glm::lookAt( glm::vec3(0.0f, 0.0f, 3.0f), 
+  		                    glm::vec3(0.0f, 0.0f, 0.0f), 
+  		                    glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // another ex of spining camera
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        */
+        
+
+
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
         // projection matrix - translates from view -> clip space / screen space
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -234,9 +281,11 @@ int main(){
         // using draw elements as were now using element buffers 
         //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-        
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
         // call draw arrays 10 time, but send diffrent model matrix to shader each time
+        
+        // model transfomations need to be in the for loop to apply to each cube
         for(unsigned int i = 0; i < 10; i++)
         {
             glm::mat4 model = glm::mat4(1.0f);
@@ -247,7 +296,7 @@ int main(){
 
             glDrawArrays(GL_TRIANGLES, 0, 36);
         }
-                
+              
         // check events & swap render buffers (display new image)
         glfwSwapBuffers(window);
         glfwPollEvents();    
@@ -265,7 +314,55 @@ void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        
 }
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+{
+if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+  
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos; 
+    lastX = xpos;
+    lastY = ypos;
+
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw   += xoffset;
+    pitch += yoffset;
+
+    if(pitch > 89.0f)
+        pitch = 89.0f;
+    if(pitch < -89.0f)
+        pitch = -89.0f;
+
+    glm::vec3 direction;
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+    cameraFront = glm::normalize(direction);
+
+}
+
+
+
 
 // whenver the window size is changed it is updated imeditly (neccisary as opengl uses this for perspective matrices)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
