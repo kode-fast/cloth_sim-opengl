@@ -23,14 +23,19 @@ const unsigned int HEIGHT = 600;
 bool firstMouse = true;
 float yaw   = -90.0f;	// yaw is initialized to -90.0 degrees since a yaw of 0.0 results in a direction vector pointing to the right so we initially rotate a bit to the left.
 float pitch =  0.0f;
-float lastX =  800.0f / 2.0;
-float lastY =  600.0 / 2.0;
+float lastX =  (float)WIDTH / 2.0;
+float lastY =  (float)HEIGHT / 2.0;
 
 float deltaTime = 0.0f; 
 float lastFrame = 0.0f;
 
 // set camera positions
+
+// setting for camera distace ? = 3.0
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
+
+// TODO make camera front consistent thruoght the program (look at input function)
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
@@ -44,7 +49,7 @@ int main(){
     //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
   
     // create opengl window context (state machine)
-    GLFWwindow* window = glfwCreateWindow(800, 600, "ClothSim", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "ClothSim", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -255,8 +260,11 @@ int main(){
         */
         
 
+        // lookAt func takes camera position, target position (where we want the camera to look at), world up vector
+        // view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
-        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        // view = glm::lookAt(cameraPos, cameraPos + ( 3.0f * cameraFront ) , cameraUp);
+        view = glm::lookAt(cameraPos, cameraTarget , cameraUp);
 
         // projection matrix - translates from view -> clip space / screen space
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
@@ -316,15 +324,37 @@ void processInput(GLFWwindow *window)
         glfwSetWindowShouldClose(window, true);
 
     const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        cameraPos += cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
         cameraPos -= cameraSpeed * cameraFront;
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraTarget -= cameraSpeed * cameraFront;
+        //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+        cameraPos += cameraSpeed * cameraFront;
+        cameraTarget += cameraSpeed * cameraFront;
+        //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
         cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        
+        cameraTarget += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        cameraTarget -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        //std::cout << "--------------" , cameraTarget.x , cameraTarget.y, cameraTarget.z ,"---------";
+
+    }
+
+
+    
+
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
@@ -341,24 +371,42 @@ if (firstMouse)
     lastX = xpos;
     lastY = ypos;
 
-    float sensitivity = 0.1f;
+    float sensitivity = 0.9f;
     xoffset *= sensitivity;
     yoffset *= sensitivity;
 
     yaw   += xoffset;
     pitch += yoffset;
 
+ // dont need pich lock for rotation camera
+// TODO fix camera fliping when going over 90 degrees 
     if(pitch > 89.0f)
         pitch = 89.0f;
     if(pitch < -89.0f)
         pitch = -89.0f;
 
-    glm::vec3 direction;
+    //glm::vec3 direction;
+    /*fly style camera
     direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     direction.y = sin(glm::radians(pitch));
     direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     cameraFront = glm::normalize(direction);
+    */
 
+    glm::vec3 newPos;
+    // orbit style camera 
+
+    // pitch - rotate around x and z (up down)
+    // yaw - rotate around y (left right)
+
+    newPos.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    newPos.y = sin(glm::radians(pitch));
+    newPos.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+    // multiply by length to target / rotation radius 
+    // TODO - find better way to do this (w/out sqrt)
+    cameraPos = glm::length(cameraPos) * glm::normalize((cameraPos - newPos));
+    cameraFront = glm::normalize(cameraPos - cameraTarget);
 }
 
 
