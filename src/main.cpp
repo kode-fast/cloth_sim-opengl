@@ -1,4 +1,4 @@
-// done with lean opengl tutorials from learnopengl.com
+// done with learn opengl tutorials from learnopengl.com
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -63,7 +63,7 @@ int main(){
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // tell window to capture mouse
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     // initilize glad (load all opengl function pointers)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -94,6 +94,12 @@ int main(){
         0, 1, 3,   // first triangle
         1, 2, 3    // second triangle
     };  
+
+    0 0 0 
+
+    0 1 0
+
+    1 0 0 
 
     */
     float vertices[] = {
@@ -153,8 +159,8 @@ int main(){
     glm::vec3(-1.3f,  1.0f, -1.5f)  
     };
 
-    // TODO make mesh class
-    
+    // TODO make mesh / object class
+
     // vertex buffer object
     // vertex array object (rendering config object)
 
@@ -213,8 +219,7 @@ int main(){
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-
-
+        printf("%f\n", currentFrame);
         // every frame process input 
         processInput(window);
         // background (render first)
@@ -269,17 +274,20 @@ int main(){
         // projection matrix - translates from view -> clip space / screen space
         projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
 
-        // now send each matrix to our perspective shader uning uniform variable
-
+        // now send each matrix to our perspective shader using uniform variable
         int modelLoc = glGetUniformLocation(ourShader.ID, "model");
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-        modelLoc = glGetUniformLocation(ourShader.ID, "view");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(view));
+        int viewLoc = glGetUniformLocation(ourShader.ID, "view");
+        glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
-        modelLoc = glGetUniformLocation(ourShader.ID, "projection");
-        glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        int projLoc = glGetUniformLocation(ourShader.ID, "projection");
+        glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
 
+        // get location of delta time var in vs shader
+        int timeLoc = glGetUniformLocation(ourShader.ID, "time");
+        // set uniform variable
+        glUniform1f(timeLoc, currentFrame);
 
         // 5. draw the object using the VAO object 
         // use VAO to draw
@@ -296,9 +304,11 @@ int main(){
         // model transfomations need to be in the for loop to apply to each cube
         for(unsigned int i = 0; i < 10; i++)
         {
+
+
             glm::mat4 model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i; 
+            float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             ourShader.setMat4("model", model);
 
@@ -320,93 +330,114 @@ int main(){
 // user input function
 void processInput(GLFWwindow *window)
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
 
-    const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
-        cameraPos -= cameraSpeed * cameraFront;
-        cameraTarget -= cameraSpeed * cameraFront;
-        //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+    if ( glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+            
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+        if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+            glfwSetWindowShouldClose(window, true);
+
+        const float cameraSpeed = 2.5f * deltaTime; // adjust accordingly
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS){
+            cameraPos -= cameraSpeed * cameraFront;
+            cameraTarget -= cameraSpeed * cameraFront;
+            //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+            cameraPos += cameraSpeed * cameraFront;
+            cameraTarget += cameraSpeed * cameraFront;
+            //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
+            cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            cameraTarget += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+
+        }
+
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
+            cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            cameraTarget -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+            //std::cout << "--------------" , cameraTarget.x , cameraTarget.y, cameraTarget.z ,"---------";
+
+        }
 
     }
 
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
-        cameraPos += cameraSpeed * cameraFront;
-        cameraTarget += cameraSpeed * cameraFront;
-        //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
+    if ( glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+    {
+        
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
     }
-
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS){
-        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        cameraTarget += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        //std::cout << cameraTarget.x , cameraTarget.y, cameraTarget.z;
-
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS){
-        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        cameraTarget -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        //std::cout << "--------------" , cameraTarget.x , cameraTarget.y, cameraTarget.z ,"---------";
-
-    }
-
-
     
 
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-if (firstMouse)
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
     {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-  
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos; 
-    lastX = xpos;
-    lastY = ypos;
 
-    float sensitivity = 0.9f;
-    xoffset *= sensitivity;
-    yoffset *= sensitivity;
+        if (firstMouse)
+            {
+                lastX = xpos;
+                lastY = ypos;
+                firstMouse = false;
+            }
+        
+            float xoffset = xpos - lastX;
+            float yoffset = lastY - ypos; 
+            lastX = xpos;
+            lastY = ypos;
 
-    yaw   += xoffset;
-    pitch += yoffset;
+            float sensitivity = 0.9f;
+            xoffset *= sensitivity;
+            yoffset *= sensitivity;
 
- // dont need pich lock for rotation camera
-// TODO fix camera fliping when going over 90 degrees 
-    if(pitch > 89.0f)
-        pitch = 89.0f;
-    if(pitch < -89.0f)
-        pitch = -89.0f;
+            yaw   += xoffset;
+            pitch += yoffset;
 
-    //glm::vec3 direction;
-    /*fly style camera
-    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    direction.y = sin(glm::radians(pitch));
-    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-    cameraFront = glm::normalize(direction);
-    */
+        // dont need pich lock for rotation camera
+        // TODO fix camera fliping when going over 90 degrees 
 
-    glm::vec3 newPos;
-    // orbit style camera 
+        
+            if(pitch > 89.0f)
+                pitch = 89.0f;
+            if(pitch < -89.0f)
+                pitch = -89.0f;
+        
+            //glm::vec3 direction;
+            /*fly style camera
+            direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            direction.y = sin(glm::radians(pitch));
+            direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            cameraFront = glm::normalize(direction);
+            */
 
-    // pitch - rotate around x and z (up down)
-    // yaw - rotate around y (left right)
+            glm::vec3 newPos;
+            // orbit style camera 
 
-    newPos.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-    newPos.y = sin(glm::radians(pitch));
-    newPos.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+            // pitch - rotate around x and z (up down)
+            // yaw - rotate around y (left right)
 
-    // multiply by length to target / rotation radius 
-    // TODO - find better way to do this (w/out sqrt)
-    cameraPos = glm::length(cameraPos) * glm::normalize((cameraPos - newPos));
-    cameraFront = glm::normalize(cameraPos - cameraTarget);
+            newPos.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+            newPos.y = sin(glm::radians(pitch));
+            newPos.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+            // multiply by length to target / rotation radius 
+            // TODO - find better way to do this (w/out sqrt)
+            cameraPos = glm::length(cameraPos) * glm::normalize((cameraPos - newPos));
+            cameraFront = glm::normalize(cameraPos - cameraTarget);
+
+    }   
 }
 
 

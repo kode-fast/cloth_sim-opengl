@@ -1,0 +1,14 @@
+
+
+class Object
+{
+public:
+
+    Object(){
+
+        
+
+    }
+
+
+};
