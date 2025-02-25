@@ -1,4 +1,16 @@
 
+2 PARTS ->
+    opengl renderer 
+    partical simulator w/ spring mass system 
+
+-> can kind of make them together 
+
+-> the point of compatibility is the vertex list of the opengl renderer 
+-> or the shader ? 
+
+-> if we do it as a shader (its just a cloth sim after all, we dont need partical function by itself)
+    then we dont need an explecit partical class, maby only a struct to pass to shader? idk
+-> save the shader for a unity project?? (more applicibal)
 
 data pipeline: 
 
@@ -6,6 +18,7 @@ origonal mesh ->
 
 main loop ->
 
+-> we have to write a partical simulator for the partical masses in spring mass system
 vertex shader ->
     we have each vert data in vertex shader and can transform it 
     the verts posistion is saved with gl_Position built in var 

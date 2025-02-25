@@ -82,50 +82,79 @@ int main(){
 
     // element buffer object (ebo)
     // store only uniqe vertices then store what order to render them in
-
-    // generate sheet 
-    int width = 100;
-    int height = 100;
-    float increment = 1;
-
+    // DONT NEED TO USE RN
     
-
-    for(int j = 0; j<height; j++){
-        for(int i=0; i<width; i++){
-            
-        }
-
-    }
-
-
-
-
-    // 10 Cubes - testing  
     float vertices[] = {
-    // Positions          // Color 
-    -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,// 0 - Back Bottom Left
-     0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// 1 - Back Bottom Right
-     0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,// 2 - Back Top Right
-    -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// 3 - Back Top Left
-    -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,// 4 - Front Bottom Left
-     0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,// 5 - Front Bottom Right
-     0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,// 6 - Front Top Right
-    -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f // 7 - Front Top Left
+        // pos              // color
+        0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f,// top right
+        0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,// bottom right
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,// bottom left
+        -0.5f,  0.5f, 0.0f,  0.0f, 1.0f, 1.0f // top left 
     };
         unsigned int indices[] = {  
-    // Back face
-    0, 1, 2, 2, 3, 0, 
-    // Front face
-    4, 5, 6, 6, 7, 4, 
-    // Left face
-    0, 3, 7, 7, 4, 0, 
-    // Right face
-    1, 5, 6, 6, 2, 1, 
-    // Bottom face
-    0, 1, 5, 5, 4, 0, 
-    // Top face
-    3, 2, 6, 6, 7, 3
+        0, 1, 3,   // first triangle
+        1, 2, 3    // second triangle
     };  
+
+    /*
+    float vertices[] = {
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f,
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 1.0f
+    };
+    */
+
+
+    glm::vec3 cubePositions[] = {
+    glm::vec3( 0.0f,  0.0f,  0.0f), 
+    glm::vec3( 2.0f,  5.0f, -15.0f), 
+    glm::vec3(-1.5f, -2.2f, -2.5f),  
+    glm::vec3(-3.8f, -2.0f, -12.3f),  
+    glm::vec3( 2.4f, -0.4f, -3.5f),  
+    glm::vec3(-1.7f,  3.0f, -7.5f),  
+    glm::vec3( 1.3f, -2.0f, -2.5f),  
+    glm::vec3( 1.5f,  2.0f, -2.5f), 
+    glm::vec3( 1.5f,  0.2f, -1.5f), 
+    glm::vec3(-1.3f,  1.0f, -1.5f)  
+    };
 
     // TODO make mesh / object class
     // -> this is to wrap the creation and rendering settings of an object into a subroutine that can be easly called
@@ -136,23 +165,23 @@ int main(){
 
     // vertex buffer object
     // vertex array object (rendering config object)
-    unsigned int VBO, VAO, EBO;// 
+    unsigned int VBO, VAO; //, EBO;
     // generates buffer object for vertex buffer object
     glGenBuffers(1,&VBO);
-    glGenBuffers(1, &EBO);
+    //glGenBuffers(1, &EBO);
     glGenVertexArrays(1,&VAO);
 
     //1. binds vertex array object, any subsecent calls of relevent func will be stored inside (next non rel func brakes this?)
     glBindVertexArray(VAO);
     // 2. copy vert array in buffer for opengl
     // binds buffer object to the opengl (vertex) array buffer
-    glBindBuffer(GL_ARRAY_BUFFER,VBO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
     // copys user data to the gl array buffer (in graphics card)
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     // 3. copy index array in a element buffer for opengl
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
     // 4. set vertex attributes pointers
     // position attribute
@@ -164,42 +193,10 @@ int main(){
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
 
-
-    /*
-    // WORKS ! :)
-    // for it to work in loop we have to not unbinde the VBO after the setup above
-    // vertex modification test -------------------------------
-
-    // TODO - use glMapBufferRange to get mesh in buffer 
-    float newVertices[] = {
-    // Positions          // Color 
-    0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,// 2 - Back Top Right
-    -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// 3 - Back Top Left
-    -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,// 4 - Front Bottom Left
-     0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,// 5 - Front Bottom Right
-    -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,// 0 - Back Bottom Left
-     0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// 1 - Back Bottom Right
-     0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,// 6 - Front Top Right
-    -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f // 7 - Front Top Left
-    };
-
-    // get pointer to gpu memory - remeber we dont use variable for this the opengl constant will give us the buffer memory
-    void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(newVertices), GL_MAP_WRITE_BIT);
-    // memcpy copys the block of memorey from the array to the 
-    memcpy(ptr, newVertices, sizeof(newVertices));
-
-    // unmap the buffer (HAVE TO DO becuse opengl locks the buffer when its mapped)
-
-    glUnmapBuffer(GL_ARRAY_BUFFER);
-    */
-
-    // -------------------------- -------------------------------
-    
-
     // unbind the VBO and VAO so we dont accedently modify them later
     // ---------------------------------------------------------------
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
     glBindVertexArray(0); 
@@ -209,7 +206,7 @@ int main(){
 
     // set global rendering settings
     // wireframe 
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     // solid 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -238,11 +235,6 @@ int main(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-        // UPDATE WORKS :)
-        // update vertex positions
-
-        update(vertices);
-
         // activate shader
         ourShader.use();
         //ourShader.setFloat("someUniformVariable", 1.0f);
@@ -257,15 +249,34 @@ int main(){
 
         // TODO remove exparements bellow
         double time = glfwGetTime();
-        /*
         // model matrix - translates from object -> world (aka transforms objects around the sceane)
         model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
         model = glm::rotate(model, (float)time * glm::radians(50.0f), glm::vec3(0.5f, 1.0f, 0.0f));  
         model = glm::translate(model, glm::vec3(sin(time)+0.2, cos(time)+0.5, 0.0 ));  
         model = glm::rotate(model, (float)time, glm::vec3(0.0, 0.0, 1.0));
-        */
+
         // view matrix - translates from world -> view (puts camera at 0,0,0 on the z axis)
+        // in this case were moving the camera back 3 units (or the sceane forward)
+        //view = glm::translate(view, glm::vec3(0.0f,0.0f,-3.0f));
+
+        // use glm::look at to create a camera look at matrix 
+        /* ex:
+        view = glm::lookAt( glm::vec3(0.0f, 0.0f, 3.0f), 
+  		                    glm::vec3(0.0f, 0.0f, 0.0f), 
+  		                    glm::vec3(0.0f, 1.0f, 0.0f));
+
+        // another ex of spining camera
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        */
+        
+
         // lookAt func takes camera position, target position (where we want the camera to look at), world up vector
+        // view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+
+        // view = glm::lookAt(cameraPos, cameraPos + ( 3.0f * cameraFront ) , cameraUp);
         view = glm::lookAt(cameraPos, cameraTarget , cameraUp);
 
         // projection matrix - translates from view -> clip space / screen space
@@ -292,36 +303,25 @@ int main(){
 
         // BACK TO DRAWING ARRAYS 
         // using draw elements as were now using element buffers 
-        // TODO change the 36 to len(indices)
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
 
-
-
-
-
-
-        // RENDER BLOCK
         // call draw arrays 10 time, but send diffrent model matrix to shader each time
+        
         // model transfomations need to be in the for loop to apply to each cube
-    
-        ourShader.setMat4("model", model);
+        for(unsigned int i = 0; i < 10; i++)
+        {
 
 
-        // we can change the drawing polygone mode on the fly and draw the model as meny times as we want
-        glPointSize(8);
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            ourShader.setMat4("model", model);
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        // glDrawElements <- mode, count - the # of elements to be rendered (ie number 
-        // of indexes 
-            
-        // END RENDER   
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+              
         // check events & swap render buffers (display new image)
         glfwSwapBuffers(window);
         glfwPollEvents();    

@@ -9,6 +9,8 @@
         "algorithm": "cpp",
         "locale": "cpp",
         "optional": "cpp",
-        "xstring": "cpp"
+        "xstring": "cpp",
+        "ctime": "cpp",
+        "xlocale": "cpp"
     }
 }

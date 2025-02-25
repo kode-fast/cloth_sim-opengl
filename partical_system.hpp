@@ -1,0 +1,17 @@
+
+
+
+class ParticalSystem
+{
+public:
+
+    ParticalSystem()
+    {
+
+
+
+
+    }
+
+
+};

@@ -14,10 +14,12 @@ uniform mat4 projection;
 
 // uniform buffer variable for bakeing positions?  
 
+// NOTE we can make a uniform variable of all the curent positions of particles/verts 
+// could solve some problems for shader based cloth sim? 
 void main()
 {
 
-    // gl_Position = projection * view * model * vec4(aPos, 1.0f);
+    //gl_Position = projection * view * model * vec4(aPos, 1.0f);
     
     // wave effect 
     vec3 transformedPos = aPos;
