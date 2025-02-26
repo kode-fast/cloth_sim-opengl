@@ -33,7 +33,6 @@ class ParticleSystem
 };
 
 
-
 // TEST UPDATE FUNCTION
 int update(float* vert, double deltaTime, unsigned int VBO){
     float* newVert = vert;
@@ -43,12 +42,13 @@ int update(float* vert, double deltaTime, unsigned int VBO){
         vert[i] -= 9.8f * deltaTime * 0.1;  
     }
 
-    // Map the buffer for writing
+    // can bind and unbind buffer in the function using variable pointer, dont have to do it in main function
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     // WAS USING SIZEOF() WICH WAS MAPPING THE MEMORY WRONG 
     // vert is a pointer so size of was giving just the size of the pointer varible 
     // IMPORTANT: sizeof only gives the size of array memory if its used in the same function as the array was declared 
+    // TODO remeber to take out the 3 if switching to 3D arrays for verts 
     void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, vertexCount * 3 * sizeof(float), GL_MAP_WRITE_BIT);
 
     if (ptr) {

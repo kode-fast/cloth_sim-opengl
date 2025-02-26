@@ -1,11 +1,6 @@
-first time compiling instructions:
-
+compiling steps:
 
 - open .vscode/tasks.json
-- edit compiler path
+- edit compiler path to prefered c++ compiler
 - ctrl + shift + b to build 
 
-TODO:
-
-- object class
-- 
