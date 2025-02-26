@@ -29,8 +29,8 @@ float pitch =  0.0f;
 float lastX =  (float)WIDTH / 2.0;
 float lastY =  (float)HEIGHT / 2.0;
 
-float deltaTime = 0.0f; 
-float lastFrame = 0.0f;
+double deltaTime = 0.0; 
+double lastFrame = 0.0;
 
 // set camera positions
 
@@ -217,9 +217,10 @@ int main(){
     // unbind the VBO and VAO so we dont accedently modify them later
     // ---------------------------------------------------------------
     // note that this is allowed, the call to glVertexAttribPointer registered VBO as the vertex attribute's bound vertex buffer object so afterwards we can safely unbind
-    //glBindBuffer(GL_ARRAY_BUFFER, 0); 
+    glBindBuffer(GL_ARRAY_BUFFER, 0); 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
     // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
+
     glBindVertexArray(0); 
     // ---------------------------------------------------------------
 
@@ -244,10 +245,11 @@ int main(){
     while(!glfwWindowShouldClose(window))
     {
         // CALC DELTA TIME
-        float currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
-        lastFrame = currentFrame;
-        printf("%f\n", currentFrame);
+        double time = glfwGetTime();
+        deltaTime = time - lastFrame;
+        lastFrame = time;
+
+        printf("delta time : %f\n", deltaTime);
         // every frame process input 
         processInput(window);
         // background (render first)
@@ -259,7 +261,6 @@ int main(){
         // UPDATE WORKS :)
         // update vertex positions
 
-        update(vertices);
 
         // activate shader
         ourShader.use();
@@ -273,8 +274,6 @@ int main(){
         glm::mat4 view = glm::mat4(1.0f);
         glm::mat4 projection = glm::mat4(1.0f);
 
-        // TODO remove exparements bellow
-        double time = glfwGetTime();
         /*
         // model matrix - translates from object -> world (aka transforms objects around the sceane)
         model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f)); 
@@ -302,45 +301,37 @@ int main(){
         // get location of delta time var in vs shader
         int timeLoc = glGetUniformLocation(ourShader.ID, "time");
         // set uniform variable
-        glUniform1f(timeLoc, currentFrame);
+        glUniform1f(timeLoc, time);
 
         // 5. draw the object using the VAO object 
-        // use VAO to draw
+        // use VAO memoery to draw
         glBindVertexArray(VAO);
-
-        // BACK TO DRAWING ARRAYS 
-        // using draw elements as were now using element buffers 
-        // TODO change the 36 to len(indices)
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-
-
-
-
 
 
         // RENDER BLOCK
-        // call draw arrays 10 time, but send diffrent model matrix to shader each time
-        // model transfomations need to be in the for loop to apply to each cube
-    
         ourShader.setMat4("model", model);
+       
+        update(vertices, deltaTime, VBO);
+
 
 
         // we can change the drawing polygone mode on the fly and draw the model as meny times as we want
         glPointSize(8);
-
+        // using draw elements becouse of EBO
         glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
         // glDrawElements <- mode, count - the # of elements to be rendered (ie number 
         // of indexes 
             
         // END RENDER   
+        glBindVertexArray(0); 
+
         // check events & swap render buffers (display new image)
+
         glfwSwapBuffers(window);
         glfwPollEvents();    
 

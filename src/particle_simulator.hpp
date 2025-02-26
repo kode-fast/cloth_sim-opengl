@@ -17,7 +17,7 @@ public:
 
 
     int step(double time);
-    float* update(float* vert);
+    int update(float* vert, double deltaTime, unsigned int VBO);
 
     // variables 
 
@@ -85,24 +85,33 @@ int ParticleSimulator::step(double time){
 
 
 // updates the rendered vertices positions from partical simulator step
-float* ParticleSimulator::update(float* vert){
+int ParticleSimulator::update(float* vert, double deltaTime, unsigned int VBO){
 
 
-    float* newVertices = vert;
-    printf("%f", vert[0]);
+    float* newVert = vert;
+    int vertexCount = 8;
 
-    vert[0] = vert[0] + 0.5;
-    vert[1] = vert[1] + 0.5;
+    for (int i = 1; i < vertexCount * 3; i += 3) {
+        vert[i] -= 9.8f * deltaTime * 0.1;  
+    }
 
-    void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(newVertices), GL_MAP_WRITE_BIT);
-    // memcpy copys the block of memorey from the array to the 
-    memcpy(ptr, newVertices, sizeof(newVertices));
+    // Map the buffer for writing
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    // unmap the buffer (HAVE TO DO becuse opengl locks the buffer when its mapped)
+    // WAS USING SIZEOF() WICH WAS MAPPING THE MEMORY WRONG 
+    // vert is a pointer so size of was giving just the size of the pointer varible 
+    // IMPORTANT: sizeof only gives the size of array memory if its used in the same function as the array was declared 
+    void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, vertexCount * 3 * sizeof(float), GL_MAP_WRITE_BIT);
 
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+    if (ptr) {
+        memcpy(ptr, newVert, vertexCount * 3 * sizeof(float)); // Corrected memory copy
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
 
-    return newVertices;
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+    return 0;
 }
 
 

@@ -25,7 +25,8 @@ struct Particle{
 
 class ParticleSystem
 {
-
+    int numParticles;
+    int numSprings;
     Particle* particles;
     Spring* springs;
 
@@ -33,37 +34,32 @@ class ParticleSystem
 
 
 
-
-
 // TEST UPDATE FUNCTION
-float* update(float* vert){
+int update(float* vert, double deltaTime, unsigned int VBO){
+    float* newVert = vert;
+    int vertexCount = 8;
 
-    float* newVertices = vert;
-    // TODO could reinterpret_cast the 1d array to a 2d array for sim
-    
-    /*
-    // size of vert is 8 
-    printf("%d",sizeof(vert));
-
-    // this prints 8 digits not 8 paris of 3 - need to multiply by size of data type to get total size of the array 
-    for(int i = 0; i < sizeof(vert)*sizeof(double);i++){
-        printf("%f\n", vert[i]);
-
+    for (int i = 1; i < vertexCount * 3; i += 3) {
+        vert[i] -= 9.8f * deltaTime * 0.1;  
     }
-    */
-   
-    vert[0] = vert[0] + 0.5;
-    vert[1] = vert[1] + 0.5;
 
-    void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, sizeof(newVertices), GL_MAP_WRITE_BIT);
-    // memcpy copys the block of memorey from the array to the 
-    memcpy(ptr, newVertices, sizeof(newVertices));
+    // Map the buffer for writing
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
-    // unmap the buffer (HAVE TO DO becuse opengl locks the buffer when its mapped)
+    // WAS USING SIZEOF() WICH WAS MAPPING THE MEMORY WRONG 
+    // vert is a pointer so size of was giving just the size of the pointer varible 
+    // IMPORTANT: sizeof only gives the size of array memory if its used in the same function as the array was declared 
+    void* ptr = glMapBufferRange(GL_ARRAY_BUFFER, 0, vertexCount * 3 * sizeof(float), GL_MAP_WRITE_BIT);
 
-    glUnmapBuffer(GL_ARRAY_BUFFER);
+    if (ptr) {
+        memcpy(ptr, newVert, vertexCount * 3 * sizeof(float)); // Corrected memory copy
+        glUnmapBuffer(GL_ARRAY_BUFFER);
+    }
 
-    return newVertices;
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+
+    return 0;
 }
 
 #endif
