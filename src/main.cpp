@@ -8,7 +8,9 @@
 #include <GLFW/glfw3.h>
 
 #include "shader.hpp"
-#include "spring_mass.hpp"
+
+#include "particle_system.hpp"
+#include "particle_simulator.hpp"
 
 // func declare
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -99,20 +101,36 @@ int main(){
 
 
 
-
+    // TODO can seperate color into a diffrent array for easy modification of verts 
     // 10 Cubes - testing  
     float vertices[] = {
-    // Positions          // Color 
-    -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,// 0 - Back Bottom Left
-     0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// 1 - Back Bottom Right
-     0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f,// 2 - Back Top Right
-    -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f,// 3 - Back Top Left
-    -0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f,// 4 - Front Bottom Left
-     0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f,// 5 - Front Bottom Right
-     0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f,// 6 - Front Top Right
-    -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, 0.0f // 7 - Front Top Left
+    // Positions         
+    -0.5f, -0.5f, -0.5f, // 0 - Back Bottom Left
+     0.5f, -0.5f, -0.5f, // 1 - Back Bottom Right
+     0.5f,  0.5f, -0.5f, // 2 - Back Top Right
+    -0.5f,  0.5f, -0.5f, // 3 - Back Top Left
+    -0.5f, -0.5f,  0.5f, // 4 - Front Bottom Left
+     0.5f, -0.5f,  0.5f, // 5 - Front Bottom Right
+     0.5f,  0.5f,  0.5f, // 6 - Front Top Right
+    -0.5f,  0.5f,  0.5f // 7 - Front Top Left
     };
-        unsigned int indices[] = {  
+
+    // TODO can set up particle system at this point after we've set up mesh 
+
+    float color[]{
+    // Color 
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 1.0f, 0.0f,
+    1.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 1.0f,
+    0.0f, 1.0f, 0.0f 
+    };
+
+
+    unsigned int indices[] = {  
     // Back face
     0, 1, 2, 2, 3, 0, 
     // Front face
@@ -156,12 +174,12 @@ int main(){
 
     // 4. set vertex attributes pointers
     // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
     
     // TODO, USE NORMALIZED POSITION AS COLOUR ATRABUTES
     // color attribute 
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3* sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)(3* sizeof(float)));
     glEnableVertexAttribArray(1);
 
 
