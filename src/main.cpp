@@ -99,8 +99,6 @@ int main(){
 
     }
 
-
-
     // TODO can seperate color into a diffrent array for easy modification of verts 
     // 10 Cubes - testing  
     float vertices[] = {
@@ -115,7 +113,28 @@ int main(){
     -0.5f,  0.5f,  0.5f // 7 - Front Top Left
     };
 
+    // 0 here to?
+    printf("%f", vertices[2]);
     // TODO can set up particle system at this point after we've set up mesh 
+    // can use sizeof() here becouse vertices is declared in this file 
+    ParticleSystem particles(vertices, sizeof(vertices)/sizeof(float), 1.0);
+    // set up springs 
+
+    // declare particle simulator 
+    // give POINTER to particles so it doesnet gets passed by referance
+    ParticleSimulator simulation(&particles);
+    
+    printf("particles address in main: %p\n", particles);
+
+    // particles array decaying 
+    printf("main test: %f\n", particles.particles[0].pos[0]);
+
+    // mass also decaying ??
+    printf("main test particles mass: %f\n", particles.particles[0].mass);
+
+
+    // DEBUG RETURN remove
+    //return  0;
 
     float color[]{
     // Color 
@@ -248,6 +267,8 @@ int main(){
         double time = glfwGetTime();
         deltaTime = time - lastFrame;
         lastFrame = time;
+        // step the simulation
+        simulation.step(deltaTime);
 
         printf("delta time : %f\n", deltaTime);
         // every frame process input 
@@ -303,17 +324,15 @@ int main(){
         // set uniform variable
         glUniform1f(timeLoc, time);
 
+        ourShader.setMat4("model", model);
+
         // 5. draw the object using the VAO object 
         // use VAO memoery to draw
         glBindVertexArray(VAO);
 
-
         // RENDER BLOCK
-        ourShader.setMat4("model", model);
-       
-        update(vertices, deltaTime, VBO);
-
-
+        // update vertices from the simulation
+        simulation.update(vertices, VBO);
 
         // we can change the drawing polygone mode on the fly and draw the model as meny times as we want
         glPointSize(8);

@@ -11,6 +11,7 @@
         "optional": "cpp",
         "xstring": "cpp",
         "ctime": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "utility": "cpp"
     }
 }
