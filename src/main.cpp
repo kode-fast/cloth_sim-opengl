@@ -120,21 +120,14 @@ int main(){
     ParticleSystem particles(vertices, sizeof(vertices)/sizeof(float), 1.0);
     // set up springs 
 
+
+
     // declare particle simulator 
     // give POINTER to particles so it doesnet gets passed by referance
+    // TODO might be still passing particles by copy somwhere (as indicated by particle address changing - test below and in particle_system constructor)
     ParticleSimulator simulation(&particles);
-    
-    printf("particles address in main: %p\n", particles);
+    //printf("particles address in main: %p\n", particles);
 
-    // particles array decaying 
-    printf("main test: %f\n", particles.particles[0].pos[0]);
-
-    // mass also decaying ??
-    printf("main test particles mass: %f\n", particles.particles[0].mass);
-
-
-    // DEBUG RETURN remove
-    //return  0;
 
     float color[]{
     // Color 
